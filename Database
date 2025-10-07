@@ -1,0 +1,102 @@
+CREATE DATABASE LastMinuteFlightBookingDB;
+USE LastMinuteFlightBookingDB;
+
+-- =======================
+-- 1. USER TABLE
+-- =======================
+CREATE TABLE Users (
+    UserID INT IDENTITY(1001,1) PRIMARY KEY,
+    FullName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
+    Phone VARCHAR(20),
+    Role VARCHAR(20) CHECK (Role IN ('Traveler','Admin')) DEFAULT 'Traveler',
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- =======================
+-- 2. AIRPORT TABLE
+-- =======================
+CREATE TABLE Airports (
+    AirportID INT IDENTITY(1,1) PRIMARY KEY,
+    AirportCode CHAR(3) UNIQUE NOT NULL,
+    AirportName VARCHAR(100) NOT NULL,
+    City VARCHAR(50),
+    Country VARCHAR(50)
+);
+
+-- =======================
+-- 3. FLIGHT TABLE
+-- =======================
+CREATE TABLE Flights (
+    FlightID INT IDENTITY(2001,1) PRIMARY KEY,
+    AirlineName VARCHAR(50) NOT NULL,
+    FlightNumber VARCHAR(10) UNIQUE NOT NULL,
+    OriginID INT FOREIGN KEY REFERENCES Airports(AirportID),
+    DestinationID INT FOREIGN KEY REFERENCES Airports(AirportID),
+    DepartureTime DATETIME NOT NULL,
+    ArrivalTime DATETIME NOT NULL,
+    TotalSeats INT CHECK (TotalSeats > 0),
+    AvailableSeats INT CHECK (AvailableSeats >= 0),
+    BaseFare DECIMAL(10,2) CHECK (BaseFare >= 0),
+    Status VARCHAR(20) DEFAULT 'Scheduled'
+);
+
+-- =======================
+-- 4. BOOKING TABLE
+-- =======================
+CREATE TABLE Bookings (
+    BookingID INT IDENTITY(3001,1) PRIMARY KEY,
+    UserID INT FOREIGN KEY REFERENCES Users(UserID),
+    FlightID INT FOREIGN KEY REFERENCES Flights(FlightID),
+    BookingDate DATETIME DEFAULT GETDATE(),
+    TotalAmount DECIMAL(10,2),
+    BookingStatus VARCHAR(20) CHECK (BookingStatus IN ('Confirmed','Cancelled','Pending')) DEFAULT 'Pending'
+);
+
+-- =======================
+-- 5. PASSENGER DETAILS
+-- =======================
+CREATE TABLE Passengers (
+    PassengerID INT IDENTITY(4001,1) PRIMARY KEY,
+    BookingID INT FOREIGN KEY REFERENCES Bookings(BookingID),
+    PassengerName VARCHAR(100) NOT NULL,
+    Gender VARCHAR(10),
+    Age INT CHECK (Age > 0),
+    SeatNumber VARCHAR(5)
+);
+
+-- =======================
+-- 6. PAYMENTS TABLE
+-- =======================
+CREATE TABLE Payments (
+    PaymentID INT IDENTITY(5001,1) PRIMARY KEY,
+    BookingID INT FOREIGN KEY REFERENCES Bookings(BookingID),
+    PaymentDate DATETIME DEFAULT GETDATE(),
+    PaymentMethod VARCHAR(20) CHECK (PaymentMethod IN ('Credit Card','Debit Card','UPI','PayPal')),
+    AmountPaid DECIMAL(10,2),
+    PaymentStatus VARCHAR(20) CHECK (PaymentStatus IN ('Successful','Failed','Pending')) DEFAULT 'Pending',
+    TransactionRef VARCHAR(50)
+);
+
+-- =======================
+-- 7. NOTIFICATIONS TABLE
+-- =======================
+CREATE TABLE Notifications (
+    NotificationID INT IDENTITY(6001,1) PRIMARY KEY,
+    UserID INT FOREIGN KEY REFERENCES Users(UserID),
+    Message VARCHAR(255),
+    SentAt DATETIME DEFAULT GETDATE(),
+    Channel VARCHAR(20) CHECK (Channel IN ('Email','SMS')) DEFAULT 'Email'
+);
+
+-- =======================
+-- 8. ADMIN LOG TABLE
+-- =======================
+CREATE TABLE AdminLogs (
+    LogID INT IDENTITY(7001,1) PRIMARY KEY,
+    AdminID INT FOREIGN KEY REFERENCES Users(UserID),
+    ActionType VARCHAR(50),
+    Description VARCHAR(255),
+    ActionTime DATETIME DEFAULT GETDATE()
+);
