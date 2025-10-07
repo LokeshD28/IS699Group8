@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Last-Minute Flight Booking</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header>
+    <h1>✈️ Last-Minute Flight Booking</h1>
+  </header>
+
+  <section class="search-section">
+    <h2>Find Your Flight</h2>
+    <form id="searchForm" action="results.html">
+      <label>From:</label>
+      <input type="text" id="from" placeholder="LAX" required>
+      <label>To:</label>
+      <input type="text" id="to" placeholder="SFO" required>
+      <label>Date:</label>
+      <input type="date" id="date" required>
+      <button type="submit">Search Flights</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 Last-Minute Flight Booking</p>
+  </footer>
+</body>
+</html>
