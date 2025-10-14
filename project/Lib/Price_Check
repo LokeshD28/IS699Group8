@@ -1,0 +1,7 @@
+import { fetchQuotes } from "@/lib/adapters/skyscannerSandbox";
+
+export async function checkPrice(origin: string, destination: string, departDate: string) {
+  const quotes = await fetchQuotes(origin, destination, departDate);
+  const best = quotes.reduce((min, q) => Math.min(min, q.price), Infinity);
+  return { bestPrice: best, quotes };
+}
