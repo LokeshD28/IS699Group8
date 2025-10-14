@@ -1,0 +1,21 @@
+import { useState } from "react";
+
+export default function FavoriteRouteForm({ onAdded }: { onAdded: () => void }) {
+  const [origin, setOrigin] = useState("LAX");
+  const [destination, setDestination] = useState("SFO");
+  const [loading, setLoading] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault(); setLoading(true);
+    await fetch("/api/favorites", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ origin, destination }) });
+    setLoading(false); onAdded();
+  };
+
+  return (
+    <form onSubmit={submit} className="flex gap-2 items-end">
+      <input className="border rounded p-2" value={origin} onChange={e=>setOrigin(e.target.value.toUpperCase())} maxLength={3} placeholder="From"/>
+      <input className="border rounded p-2" value={destination} onChange={e=>setDestination(e.target.value.toUpperCase())} maxLength={3} placeholder="To"/>
+      <button className="px-3 py-2 rounded bg-black text-white" disabled={loading}>{loading?"Adding…":"Add Favorite"}</button>
+    </form>
+  );
+}
