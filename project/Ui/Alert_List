@@ -1,0 +1,25 @@
+import { useEffect, useState } from "react";
+
+export default function AlertList() {
+  const [rows, setRows] = useState<any[]>([]);
+  const load = async () => {
+    const res = await fetch("/api/alerts");
+    const data = await res.json();
+    setRows(data.rows);
+  };
+  useEffect(() => { load(); }, []);
+
+  const check = async (id: number) => {
+    await fetch(`/api/alerts?check=${id}`, { method: "PATCH" });
+    await load();
+  };
+  const del = async (id: number) => {
+    await fetch(`/api/alerts?id=${id}`, { method: "DELETE" });
+    await load();
+  };
+
+  if (!rows.length) return <p className="text-sm text-gray-600">No alerts yet.</p>;
+
+  return (
+    <div className="overflow-x-auto">
+      <tabl
