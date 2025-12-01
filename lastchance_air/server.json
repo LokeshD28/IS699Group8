@@ -1,0 +1,180 @@
+const express = require("express");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
+const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// ---------- MIDDLEWARE ----------
+app.use(cors()); // allow all origins (fine for mock)
+app.use(express.json());
+
+// ---------- DATABASE ----------
+const dbPath = path.join(__dirname, "database.db");
+const db = new sqlite3.Database(dbPath);
+
+// Create tables if not exist
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS bookings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      booking_ref TEXT NOT NULL,
+      route TEXT NOT NULL,
+      airline TEXT NOT NULL,
+      departure_date TEXT NOT NULL,
+      departure_time TEXT NOT NULL,
+      passenger_name TEXT NOT NULL,
+      passenger_email TEXT NOT NULL,
+      total_paid REAL NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+  `);
+});
+
+// ---------- HELPERS ----------
+function nowISO() {
+  return new Date().toISOString();
+}
+
+// ---------- ROUTES ----------
+
+// Health check
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "LastChance Air backend running" });
+});
+
+// SIGNUP
+app.post("/api/signup", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" });
+  }
+
+  const passwordHash = bcrypt.hashSync(password, 10);
+
+  const stmt = db.prepare(
+    "INSERT INTO users (email, password_hash, created_at) VALUES (?, ?, ?)"
+  );
+
+  stmt.run(email, passwordHash, nowISO(), function (err) {
+    if (err) {
+      if (err.message.includes("UNIQUE")) {
+        return res.status(409).json({ error: "Email already registered" });
+      }
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(201).json({ id: this.lastID, email });
+  });
+});
+
+// LOGIN
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" });
+  }
+
+  db.get(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    (err, user) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      if (!user) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      const ok = bcrypt.compareSync(password, user.password_hash);
+      if (!ok) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      // For mock: no JWT, just send user id + email
+      res.json({ id: user.id, email: user.email });
+    }
+  );
+});
+
+// CREATE BOOKING
+app.post("/api/bookings", (req, res) => {
+  const {
+    userId,
+    bookingRef,
+    route,
+    airline,
+    departureDate,
+    departureTime,
+    passengerName,
+    passengerEmail,
+    totalPaid,
+  } = req.body;
+
+  if (!userId || !bookingRef) {
+    return res.status(400).json({ error: "Missing booking data" });
+  }
+
+  const stmt = db.prepare(
+    `INSERT INTO bookings
+      (user_id, booking_ref, route, airline, departure_date, departure_time,
+       passenger_name, passenger_email, total_paid, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  );
+
+  stmt.run(
+    userId,
+    bookingRef,
+    route,
+    airline,
+    departureDate,
+    departureTime,
+    passengerName,
+    passengerEmail,
+    totalPaid,
+    nowISO(),
+    function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      res.status(201).json({ id: this.lastID });
+    }
+  );
+});
+
+// LIST BOOKINGS FOR USER
+app.get("/api/bookings/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  db.all(
+    "SELECT * FROM bookings WHERE user_id = ? ORDER BY created_at DESC",
+    [userId],
+    (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      res.json(rows);
+    }
+  );
+});
+
+// ---------- START ----------
+app.listen(PORT, () => {
+  console.log(`Backend listening on port ${PORT}`);
+});
