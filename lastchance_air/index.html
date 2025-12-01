@@ -16,13 +16,14 @@
       </span>
     </div>
 
-    <nav class="navbar-right">
-      <a href="#" id="navHome" class="nav-link">Home</a>
-      <a href="#" id="navBookings" class="nav-link">My Bookings</a>
-      <span id="navUser" class="nav-user"></span>
-      <button id="navLogin" class="btn-outline">Login</button>
-      <button id="navLogout" class="btn-outline hidden">Logout</button>
-    </nav>
+  <nav class="navbar-right">
+  <a href="#" id="navHome" class="nav-link">Home</a>
+  <a href="#" id="navBookings" class="nav-link">My Bookings</a>
+  <span id="navUser" class="nav-user"></span>
+  <button id="navLogin" class="btn-outline">Login</button>
+  <button id="navSignup" class="btn-primary">Sign up</button>
+  <button id="navLogout" class="btn-outline hidden">Logout</button>
+</nav>
   </header>
 
   <!-- LOGIN PAGE -->
@@ -52,7 +53,46 @@
         </form>
 
         <p class="auth-footer">
-          Don't have an account? <a href="#" id="fakeSignup">Sign up</a>
+          Don't have an account? <a href="#" id="loginToSignup">Sign up</a>
+        </p>
+      </div>
+    </section>
+
+  <!-- SIGNUP PAGE -->
+    <section id="signupPage" class="page page-centered hidden">
+      <div class="card card-auth">
+        <div class="card-auth-icon">✈️</div>
+        <h1>Create an account</h1>
+        <p class="card-subtitle">Sign up to start booking last-minute flights</p>
+
+        <form id="signupForm" class="form">
+          <label>
+            <span>Email</span>
+            <div class="input-wrapper">
+              <input type="email" id="signupEmail" placeholder="your@email.com" required />
+            </div>
+          </label>
+
+          <label>
+            <span>Password</span>
+            <div class="input-wrapper">
+              <input type="password" id="signupPassword" placeholder="Create a password" required />
+            </div>
+          </label>
+
+          <label>
+            <span>Confirm Password</span>
+            <div class="input-wrapper">
+              <input type="password" id="signupPassword2" placeholder="Repeat your password" required />
+            </div>
+          </label>
+
+          <button type="submit" class="btn-primary full-width">Sign up</button>
+        </form>
+
+        <p class="auth-footer">
+          Already have an account?
+          <a href="#" id="signupToLogin">Login</a>
         </p>
       </div>
     </section>
