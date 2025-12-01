@@ -1,0 +1,537 @@
+:root {
+  --bg-main: #f5f7fb;
+  --bg-card: #ffffff;
+  --bg-hero-top: #4da3ff;
+  --bg-hero-bottom: #2f7de5;
+  --border-subtle: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --sale: #f97316;
+  --danger: #f97373;
+  --radius-card: 16px;
+  --shadow-soft: 0 18px 35px rgba(15, 23, 42, 0.08);
+  --shadow-subtle: 0 6px 16px rgba(15, 23, 42, 0.04);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: var(--text-main);
+  background: var(--bg-main);
+}
+
+/* NAVBAR */
+
+.navbar {
+  height: 64px;
+  padding: 0 40px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  font-size: 20px;
+}
+
+.logo-main {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.logo-sub {
+  font-weight: 600;
+  color: #111827;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.95rem;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--text-main);
+}
+
+.nav-user {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.btn-outline,
+.btn-primary {
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background: #ffffff;
+  border-color: var(--border-subtle);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  background: var(--primary-soft);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* PAGES */
+
+main {
+  min-height: calc(100vh - 64px - 56px);
+}
+
+.page {
+  padding: 32px 40px;
+}
+
+.page-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* CARD */
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-subtle);
+}
+
+/* LOGIN CARD */
+
+.card-auth {
+  max-width: 420px;
+  text-align: center;
+}
+
+.card-auth-icon {
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 16px;
+}
+
+.card-auth h1 {
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  margin-bottom: 20px;
+  color: var(--text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.form label span {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.input-wrapper {
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+}
+
+input,
+textarea {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 10px 0;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.auth-footer {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* HERO / SEARCH */
+
+.hero {
+  background: linear-gradient(
+    135deg,
+    var(--bg-hero-top),
+    var(--bg-hero-bottom)
+  );
+  border-radius: 0 0 32px 32px;
+  padding: 40px;
+  color: #ffffff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.4);
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  color: #e0f2fe;
+  margin-bottom: 20px;
+}
+
+.search-form {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  color: var(--text-main);
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.search-row label span {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.search-row input {
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  padding: 9px 12px;
+  background: #f9fafb;
+}
+
+.search-button {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* SECTIONS / DEALS */
+
+.section {
+  margin-top: 32px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.deals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.deal-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.deal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.deal-airline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.deal-route {
+  font-weight: 600;
+}
+
+.badge-sale {
+  background: #ffedd5;
+  color: var(--sale);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.deal-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 6px 0 10px;
+}
+
+.deal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.old-price {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-decoration: line-through;
+  margin-right: 6px;
+}
+
+.price {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.no-results {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* FLIGHT DETAILS */
+
+.card-flight-details {
+  margin-top: 16px;
+}
+
+.card-flight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.card-flight-header h2 {
+  margin: 0;
+}
+
+.muted-text {
+  color: var(--text-muted);
+}
+
+.small {
+  font-size: 0.85rem;
+}
+
+.card-flight-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.flight-info-block h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.card-flight-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+/* BOOKING / PAYMENT */
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 18px;
+}
+
+.card-summary h3 {
+  margin-top: 0;
+}
+
+.banner-warning {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.link-back {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+/* BOOKINGS LIST */
+
+.bookings-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-item {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.booking-left p {
+  margin: 2px 0;
+}
+
+/* FOOTER */
+
+.footer {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .page {
+    padding: 24px 16px;
+  }
+
+  .hero {
+    border-radius: 0;
+  }
+
+  .search-row {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-layout .card-summary {
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar-right {
+    gap: 8px;
+  }
+
+  .nav-user {
+    display: none;
+  }
+
+  .deal-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
