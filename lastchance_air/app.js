@@ -1,5 +1,7 @@
-// --------- MOCK DATA -------------
+// ---------- CONFIG ----------
+const API_BASE = "http://localhost:4000"; // change when you deploy backend
 
+// ---------- MOCK FLIGHT DATA ----------
 const flights = [
   {
     id: "EF530",
@@ -97,53 +99,54 @@ function discountedPrice(flight) {
   return +(flight.basePrice * (1 - flight.discountPercent / 100)).toFixed(2);
 }
 
-// Global state
+// ---------- GLOBAL STATE ----------
 let currentUser = null;
 let selectedFlight = null;
 let currentPassengers = 1;
 let currentBooking = null;
-let bookings = [];
 
-// --------- HELPERS -------------
-
-function $(selector) {
-  return document.querySelector(selector);
+// ---------- HELPERS ----------
+function $(sel) {
+  return document.querySelector(sel);
 }
 
-function showPage(pageId) {
+function showPage(id) {
   const pages = [
     "loginPage",
+    "signupPage",
     "homePage",
     "flightDetailsPage",
     "bookingPage",
     "paymentPage",
     "myBookingsPage",
   ];
-  pages.forEach((id) => {
-    const el = document.getElementById(id);
+  pages.forEach((pid) => {
+    const el = document.getElementById(pid);
     if (!el) return;
-    el.classList.toggle("hidden", id !== pageId);
+    el.classList.toggle("hidden", pid !== id);
   });
 }
 
 function updateNav() {
   const navUser = $("#navUser");
   const navLogin = $("#navLogin");
+  const navSignup = $("#navSignup");
   const navLogout = $("#navLogout");
 
   if (currentUser) {
     navUser.textContent = currentUser.email;
     navLogin.classList.add("hidden");
+    navSignup.classList.add("hidden");
     navLogout.classList.remove("hidden");
   } else {
     navUser.textContent = "";
     navLogin.classList.remove("hidden");
+    navSignup.classList.remove("hidden");
     navLogout.classList.add("hidden");
   }
 }
 
-// --------- RENDER DEALS -------------
-
+// ---------- RENDER FLIGHTS ----------
 function renderDeals(list = flights) {
   const container = $("#dealsContainer");
   const noResults = $("#noResults");
@@ -153,201 +156,278 @@ function renderDeals(list = flights) {
     noResults.classList.remove("hidden");
     return;
   }
-
   noResults.classList.add("hidden");
 
-  list.forEach((flight) => {
+  list.forEach((f) => {
     const card = document.createElement("div");
     card.className = "deal-card";
-
-    const newPrice = discountedPrice(flight);
+    const newPrice = discountedPrice(f);
 
     card.innerHTML = `
       <div class="deal-header">
         <div>
-          <div class="deal-airline">${flight.airline}</div>
-          <div class="deal-route">${flight.originCity} → ${
-      flight.destinationCity
-    }</div>
+          <div class="deal-airline">${f.airline}</div>
+          <div class="deal-route">${f.originCity} → ${f.destinationCity}</div>
         </div>
-        <span class="badge-sale">${flight.discountPercent}% OFF</span>
+        <span class="badge-sale">${f.discountPercent}% OFF</span>
       </div>
       <div class="deal-meta">
-        <span>📅 ${flight.departureDate}</span>
-        <span>⏰ ${flight.departureTime}</span>
+        <span>📅 ${f.departureDate}</span>
+        <span>⏰ ${f.departureTime}</span>
       </div>
       <div class="deal-footer">
         <div>
-          <span class="old-price">$${flight.basePrice.toFixed(2)}</span>
+          <span class="old-price">$${f.basePrice.toFixed(2)}</span>
           <span class="price">$${newPrice.toFixed(2)}</span>
         </div>
-        <button class="btn-outline btn-view" data-id="${flight.id}">
-          View Deal
-        </button>
+        <button class="btn-outline btn-view" data-id="${f.id}">View Deal</button>
       </div>
     `;
-
     container.appendChild(card);
   });
 
-  // Attach click handlers
   container.querySelectorAll(".btn-view").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-id");
-      const flight = flights.find((f) => f.id === id);
-      if (flight) {
-        openFlightDetails(flight);
-      }
+      const flight = flights.find((x) => x.id === id);
+      if (flight) openFlightDetails(flight);
     });
   });
 }
 
-// --------- FLIGHT DETAILS -------------
+function openFlightDetails(f) {
+  selectedFlight = f;
 
-function openFlightDetails(flight) {
-  selectedFlight = flight;
+  $("#fdRoute").textContent = `${f.originCity} → ${f.destinationCity}`;
+  $("#fdAirline").textContent = `${f.airline} · ${f.id}`;
+  $("#fdDiscount").textContent = `${f.discountPercent}% OFF`;
 
-  $("#fdRoute").textContent = `${flight.originCity} → ${flight.destinationCity}`;
-  $("#fdAirline").textContent = `${flight.airline} · ${flight.id}`;
-  $("#fdDiscount").textContent = `${flight.discountPercent}% OFF`;
+  $("#fdDepTime").textContent = f.departureTime;
+  $("#fdDepCity").textContent = f.originCity;
+  $("#fdDepDate").textContent = f.departureDate;
 
-  $("#fdDepTime").textContent = flight.departureTime;
-  $("#fdDepCity").textContent = flight.originCity;
-  $("#fdDepDate").textContent = flight.departureDate;
+  $("#fdArrTime").textContent = f.arrivalTime;
+  $("#fdArrCity").textContent = f.destinationCity;
+  $("#fdArrDate").textContent = f.departureDate;
 
-  $("#fdArrTime").textContent = flight.arrivalTime;
-  $("#fdArrCity").textContent = flight.destinationCity;
-  $("#fdArrDate").textContent = flight.departureDate; // same day for demo
+  $("#fdDuration").textContent = f.duration;
+  $("#fdSeats").textContent = f.availableSeats;
 
-  $("#fdDuration").textContent = flight.duration;
-  $("#fdSeats").textContent = flight.availableSeats;
-
-  $("#fdOldPrice").textContent = `$${flight.basePrice.toFixed(2)}`;
-  $("#fdNewPrice").textContent = `$${discountedPrice(flight).toFixed(2)}`;
+  $("#fdOldPrice").textContent = `$${f.basePrice.toFixed(2)}`;
+  $("#fdNewPrice").textContent = `$${discountedPrice(f).toFixed(2)}`;
 
   showPage("flightDetailsPage");
 }
 
-// --------- BOOKING -------------
-
+// ---------- BOOKING SUMMARY ----------
 function fillBookingSummary() {
-  const flight = selectedFlight;
-  const price = discountedPrice(flight);
+  const f = selectedFlight;
+  const price = discountedPrice(f);
   const total = price * currentPassengers;
 
-  $("#bsRoute").textContent = `${flight.originCity} → ${flight.destinationCity}`;
-  $("#bsAirline").textContent = flight.airline;
-  $("#bsDate").textContent = flight.departureDate;
-  $("#bsDeparture").textContent = flight.departureTime;
+  $("#bsRoute").textContent = `${f.originCity} → ${f.destinationCity}`;
+  $("#bsAirline").textContent = f.airline;
+  $("#bsDate").textContent = f.departureDate;
+  $("#bsDeparture").textContent = f.departureTime;
   $("#bsPassengers").textContent = currentPassengers;
   $("#bsPrice").textContent = `$${price.toFixed(2)}`;
   $("#bsTotal").textContent = `$${total.toFixed(2)}`;
 }
 
 function fillPaymentSummary() {
-  const flight = selectedFlight;
-  const price = discountedPrice(flight);
+  const f = selectedFlight;
+  const price = discountedPrice(f);
   const total = price * currentPassengers;
 
-  $("#psRoute").textContent = `${flight.originCity} → ${flight.destinationCity}`;
-  $("#psAirline").textContent = flight.airline;
-  $("#psDate").textContent = flight.departureDate;
-  $("#psDeparture").textContent = flight.departureTime;
+  $("#psRoute").textContent = `${f.originCity} → ${f.destinationCity}`;
+  $("#psAirline").textContent = f.airline;
+  $("#psDate").textContent = f.departureDate;
+  $("#psDeparture").textContent = f.departureTime;
   $("#psPassengers").textContent = currentPassengers;
   $("#psTotal").textContent = `$${total.toFixed(2)}`;
 }
 
-// --------- BOOKINGS LIST -------------
-
-function renderBookings() {
-  const container = $("#bookingsList");
-  container.innerHTML = "";
-
-  if (!bookings.length) {
-    container.innerHTML =
-      '<p class="section-subtitle">No bookings yet. Search and book a flight to see it here.</p>';
-    return;
-  }
-
-  bookings.forEach((b) => {
-    const div = document.createElement("div");
-    div.className = "booking-item";
-
-    div.innerHTML = `
-      <div class="booking-left">
-        <p><strong>Booking Ref:</strong> ${b.reference}</p>
-        <p><strong>Route:</strong> ${b.flight.originCity} → ${
-      b.flight.destinationCity
-    }</p>
-        <p><strong>Airline:</strong> ${b.flight.airline}</p>
-        <p class="muted-text">
-          ${b.flight.departureDate} · ${b.flight.departureTime}
-        </p>
-      </div>
-      <div class="booking-right">
-        <p><strong>Passenger:</strong> ${b.passenger.name}</p>
-        <p class="muted-text">${b.passenger.email}</p>
-        <p class="price">$${b.total.toFixed(2)}</p>
-        <p class="muted-text">Status: confirmed</p>
-      </div>
-    `;
-
-    container.appendChild(div);
-  });
+// ---------- BOOKINGS FROM BACKEND ----------
+async function fetchBookings() {
+  if (!currentUser) return [];
+  const res = await fetch(
+    `${API_BASE}/api/bookings/${currentUser.id}`
+  );
+  if (!res.ok) return [];
+  return res.json();
 }
 
-// --------- EVENT LISTENERS -------------
+async function renderBookings() {
+  const container = $("#bookingsList");
+  container.innerHTML = `<p class="section-subtitle">Loading...</p>`;
 
+  try {
+    const rows = await fetchBookings();
+    if (!rows.length) {
+      container.innerHTML =
+        '<p class="section-subtitle">No bookings yet. Book a flight to see it here.</p>';
+      return;
+    }
+
+    container.innerHTML = "";
+    rows.forEach((b) => {
+      const div = document.createElement("div");
+      div.className = "booking-item";
+
+      div.innerHTML = `
+        <div class="booking-left">
+          <p><strong>Booking Ref:</strong> ${b.booking_ref}</p>
+          <p><strong>Route:</strong> ${b.route}</p>
+          <p><strong>Airline:</strong> ${b.airline}</p>
+          <p class="muted-text">${b.departure_date} · ${b.departure_time}</p>
+        </div>
+        <div class="booking-right">
+          <p><strong>Passenger:</strong> ${b.passenger_name}</p>
+          <p class="muted-text">${b.passenger_email}</p>
+          <p class="price">$${b.total_paid.toFixed(2)}</p>
+          <p class="muted-text">Status: confirmed</p>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+    container.innerHTML =
+      '<p class="section-subtitle">Could not load bookings (backend offline?).</p>';
+  }
+}
+
+// ---------- AUTH STORAGE ----------
+function loadUserFromStorage() {
+  const raw = localStorage.getItem("lastchanceUser");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveUserToStorage(user) {
+  if (!user) localStorage.removeItem("lastchanceUser");
+  else localStorage.setItem("lastchanceUser", JSON.stringify(user));
+}
+
+// ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", () => {
-  // initial state
-  showPage("loginPage");
+  currentUser = loadUserFromStorage();
   updateNav();
+
+  if (currentUser) {
+    showPage("homePage");
+  } else {
+    showPage("loginPage");
+  }
+
   renderDeals();
 
-  // Login
-  $("#loginForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = $("#loginEmail").value.trim();
-    const password = $("#loginPassword").value.trim();
-
-    if (!email || !password) return;
-
-    // Fake auth
-    currentUser = { email };
-    updateNav();
-    showPage("homePage");
-  });
-
-  // Navbar actions
-  $("#navLogin").addEventListener("click", () => {
-    showPage("loginPage");
-  });
-
-  $("#navLogout").addEventListener("click", () => {
-    currentUser = null;
-    bookings = [];
-    updateNav();
-    showPage("loginPage");
-  });
-
+  // -------- NAV EVENTS --------
+  $("#navLogin").addEventListener("click", () => showPage("loginPage"));
+  $("#navSignup").addEventListener("click", () => showPage("signupPage"));
   $("#navHome").addEventListener("click", (e) => {
     e.preventDefault();
     if (currentUser) showPage("homePage");
     else showPage("loginPage");
   });
-
-  $("#navBookings").addEventListener("click", (e) => {
+  $("#navBookings").addEventListener("click", async (e) => {
     e.preventDefault();
     if (!currentUser) {
       alert("Please login to view bookings.");
       showPage("loginPage");
       return;
     }
-    renderBookings();
+    await renderBookings();
     showPage("myBookingsPage");
   });
+  $("#navLogout").addEventListener("click", () => {
+    currentUser = null;
+    saveUserToStorage(null);
+    updateNav();
+    showPage("loginPage");
+  });
 
-  // Search form
+  // Switch links between login/signup
+  $("#loginToSignup").addEventListener("click", (e) => {
+    e.preventDefault();
+    showPage("signupPage");
+  });
+  $("#signupToLogin").addEventListener("click", (e) => {
+    e.preventDefault();
+    showPage("loginPage");
+  });
+
+  // -------- SIGNUP --------
+  $("#signupForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = $("#signupEmail").value.trim();
+    const pw1 = $("#signupPassword").value;
+    const pw2 = $("#signupPassword2").value;
+
+    if (pw1 !== pw2) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pw1 }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Signup failed");
+        return;
+      }
+
+      const user = await res.json();
+      currentUser = user;
+      saveUserToStorage(user);
+      updateNav();
+      showPage("homePage");
+    } catch (err) {
+      console.error(err);
+      alert("Could not reach backend (signup).");
+    }
+  });
+
+  // -------- LOGIN --------
+  $("#loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = $("#loginEmail").value.trim();
+    const password = $("#loginPassword").value;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Login failed");
+        return;
+      }
+
+      const user = await res.json();
+      currentUser = user;
+      saveUserToStorage(user);
+      updateNav();
+      showPage("homePage");
+    } catch (err) {
+      console.error(err);
+      alert("Could not reach backend (login).");
+    }
+  });
+
+  // -------- SEARCH --------
   $("#searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const from = $("#searchFrom").value.trim().toLowerCase();
@@ -355,16 +435,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const date = $("#searchDate").value;
 
     const filtered = flights.filter((f) => {
-      const matchFrom = from
-        ? f.originCity.toLowerCase().includes(from)
-        : true;
-      const matchTo = to
-        ? f.destinationCity.toLowerCase().includes(to)
-        : true;
-      const matchDate = date ? f.departureDate === date : true;
-      return matchFrom && matchTo && matchDate;
+      const mFrom = from ? f.originCity.toLowerCase().includes(from) : true;
+      const mTo = to ? f.destinationCity.toLowerCase().includes(to) : true;
+      const mDate = date ? f.departureDate === date : true;
+      return mFrom && mTo && mDate;
     });
-
     renderDeals(filtered);
   });
 
@@ -379,13 +454,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Book now
   $("#bookNowBtn").addEventListener("click", () => {
+    if (!currentUser) {
+      alert("Please login before booking.");
+      showPage("loginPage");
+      return;
+    }
     if (!selectedFlight) return;
     currentPassengers = 1;
     fillBookingSummary();
     showPage("bookingPage");
   });
 
-  // Booking form
+  // Booking form → go to payment
   $("#bookingForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const name = $("#passengerName").value.trim();
@@ -395,13 +475,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!name || !email) return;
 
-    const flight = selectedFlight;
-    const price = discountedPrice(flight);
+    const f = selectedFlight;
+    const price = discountedPrice(f);
     const total = price * currentPassengers;
 
     currentBooking = {
-      flight,
       passenger: { name, email, phone, dob },
+      flight: f,
       total,
     };
 
@@ -409,22 +489,46 @@ document.addEventListener("DOMContentLoaded", () => {
     showPage("paymentPage");
   });
 
-  // Payment form
-  $("#paymentForm").addEventListener("submit", (e) => {
+  // Payment form → confirm booking (call backend)
+  $("#paymentForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!currentBooking) return;
+    if (!currentBooking || !currentUser) return;
 
-    const reference = "U" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const ref =
+      "U" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const { flight, passenger, total } = currentBooking;
 
-    const bookingRecord = {
-      ...currentBooking,
-      reference,
+    const payload = {
+      userId: currentUser.id,
+      bookingRef: ref,
+      route: `${flight.originCity} → ${flight.destinationCity}`,
+      airline: flight.airline,
+      departureDate: flight.departureDate,
+      departureTime: flight.departureTime,
+      passengerName: passenger.name,
+      passengerEmail: passenger.email,
+      totalPaid: total,
     };
 
-    bookings.push(bookingRecord);
+    try {
+      const res = await fetch(`${API_BASE}/api/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    alert("Booking confirmed successfully!");
-    renderBookings();
-    showPage("myBookingsPage");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Could not save booking.");
+        return;
+      }
+
+      alert("Booking confirmed successfully!");
+      await renderBookings();
+      showPage("myBookingsPage");
+    } catch (err) {
+      console.error(err);
+      alert("Backend error while saving booking.");
+    }
   });
 });
