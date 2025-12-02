@@ -106,26 +106,42 @@
             Book amazing flight deals departing soon. Save up to 30% on last-minute bookings!
           </p>
 
-          <form id="searchForm" class="search-form">
-            <div class="search-row">
-              <label>
-                <span>From</span>
-                <input type="text" id="searchFrom" placeholder="Origin city" />
-              </label>
-              <label>
-                <span>To</span>
-                <input type="text" id="searchTo" placeholder="Destination city" />
-              </label>
-              <label>
-                <span>Departure Date</span>
-                <input type="date" id="searchDate" />
-              </label>
-            </div>
+         <form id="searchForm" class="search-form">
+  <div class="search-row">
+    <label>
+      <span>From</span>
+      <input
+        type="text"
+        id="searchFrom"
+        list="originOptions"
+        placeholder="Origin city"
+      />
+      <!-- suggestions for origin -->
+      <datalist id="originOptions"></datalist>
+    </label>
 
-            <button type="submit" class="btn-primary search-button">
-              🔍 Search Flights
-            </button>
-          </form>
+    <label>
+      <span>To</span>
+      <input
+        type="text"
+        id="searchTo"
+        list="destinationOptions"
+        placeholder="Destination city"
+      />
+      <!-- suggestions for destination -->
+      <datalist id="destinationOptions"></datalist>
+    </label>
+
+    <label>
+      <span>Departure Date</span>
+      <input type="date" id="searchDate" />
+    </label>
+  </div>
+
+  <button type="submit" class="btn-primary search-button">
+    🔍 Search Flights
+  </button>
+</form>
         </div>
       </section>
 
