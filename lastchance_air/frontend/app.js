@@ -350,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   renderDeals();
+  buildCitySuggestions();
 
   // -------- NAV EVENTS --------
   $("#navLogin").addEventListener("click", () => showPage("loginPage"));
@@ -453,21 +454,28 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // -------- SEARCH --------
-  $("#searchForm").addEventListener("submit", (e) => {
+    // -------- SEARCH --------
+  document.getElementById("searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    const from = $("#searchFrom").value.trim().toLowerCase();
-    const to = $("#searchTo").value.trim().toLowerCase();
-    const date = $("#searchDate").value;
+
+    const from = document.getElementById("searchFrom").value.trim().toLowerCase();
+    const to = document.getElementById("searchTo").value.trim().toLowerCase();
+    const date = document.getElementById("searchDate").value; // YYYY-MM-DD or ""
 
     const filtered = flights.filter((f) => {
-      const mFrom = from ? f.originCity.toLowerCase().includes(from) : true;
-      const mTo = to ? f.destinationCity.toLowerCase().includes(to) : true;
-      const mDate = date ? f.departureDate === date : true;
-      return mFrom && mTo && mDate;
+      const matchFrom = from
+        ? f.originCity.toLowerCase().includes(from)
+        : true;
+      const matchTo = to
+        ? f.destinationCity.toLowerCase().includes(to)
+        : true;
+      const matchDate = date ? f.departureDate === date : true;
+
+      return matchFrom && matchTo && matchDate;
     });
+
     renderDeals(filtered);
   });
-
   // Back buttons
   $("#backToHome").addEventListener("click", () => showPage("homePage"));
   $("#backToDetails").addEventListener("click", () =>
