@@ -3,6 +3,31 @@ const API_BASE = "http://localhost:4000"; // change when you deploy backend
 
 // ---------- MOCK FLIGHT DATA ----------
 const flights = [
+  // ---------- BUILD CITY SUGGESTIONS FOR AUTOCOMPLETE ----------
+function buildCitySuggestions() {
+  const originSet = new Set();
+  const destSet = new Set();
+
+  flights.forEach((f) => {
+    originSet.add(f.originCity);
+    destSet.add(f.destinationCity);
+  });
+
+  const originList = document.getElementById("originOptions");
+  const destList = document.getElementById("destinationOptions");
+
+  originSet.forEach((city) => {
+    const opt = document.createElement("option");
+    opt.value = city;
+    originList.appendChild(opt);
+  });
+
+  destSet.forEach((city) => {
+    const opt = document.createElement("option");
+    opt.value = city;
+    destList.appendChild(opt);
+  });
+}
   {
     id: "EF530",
     airline: "AeroConnect",
