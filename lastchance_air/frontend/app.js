@@ -3,97 +3,306 @@ const API_BASE = "http://localhost:4000"; // change when you deploy backend
 
 // ---------- MOCK FLIGHT DATA ----------
 const flights = [
+  // LAX routes
   {
-    id: "EF530",
+    id: "LC100",
     airline: "AeroConnect",
-    originCity: "Paris",
-    originCode: "CDG",
-    destinationCity: "Los Angeles",
-    destinationCode: "LAX",
-    departureDate: "2025-12-02",
-    departureTime: "18:30",
-    arrivalTime: "23:30",
-    duration: "5h 0m",
-    basePrice: 1104.0,
-    discountPercent: 30,
-    availableSeats: 16,
+    originCity: "Los Angeles",
+    originCode: "LAX",
+    destinationCity: "New York",
+    destinationCode: "JFK",
+    departureDate: "2025-12-01",
+    departureTime: "08:00",
+    arrivalTime: "16:00",
+    duration: "8h 0m",
+    basePrice: 450,
+    discountPercent: 25,
+    availableSeats: 12,
   },
   {
-    id: "FJ220",
+    id: "LC101",
+    airline: "CloudAir",
+    originCity: "Los Angeles",
+    originCode: "LAX",
+    destinationCity: "Chicago",
+    destinationCode: "ORD",
+    departureDate: "2025-12-02",
+    departureTime: "10:30",
+    arrivalTime: "15:00",
+    duration: "4h 30m",
+    basePrice: 260,
+    discountPercent: 30,
+    availableSeats: 8,
+  },
+  {
+    id: "LC102",
+    airline: "SkyWings",
+    originCity: "Los Angeles",
+    originCode: "LAX",
+    destinationCity: "London",
+    destinationCode: "LHR",
+    departureDate: "2025-12-03",
+    departureTime: "18:45",
+    arrivalTime: "13:00",
+    duration: "10h 15m",
+    basePrice: 860,
+    discountPercent: 35,
+    availableSeats: 20,
+  },
+
+  // JFK routes
+  {
+    id: "LC200",
     airline: "FastJet",
-    originCity: "Singapore",
-    originCode: "SIN",
+    originCity: "New York",
+    originCode: "JFK",
+    destinationCity: "Los Angeles",
+    destinationCode: "LAX",
+    departureDate: "2025-12-01",
+    departureTime: "09:15",
+    arrivalTime: "12:15",
+    duration: "6h 0m",
+    basePrice: 390,
+    discountPercent: 30,
+    availableSeats: 10,
+  },
+  {
+    id: "LC201",
+    airline: "AeroConnect",
+    originCity: "New York",
+    originCode: "JFK",
     destinationCity: "London",
     destinationCode: "LHR",
     departureDate: "2025-12-04",
-    departureTime: "17:00",
-    arrivalTime: "23:00",
-    duration: "13h 0m",
-    basePrice: 1023.0,
+    departureTime: "21:00",
+    arrivalTime: "09:30",
+    duration: "7h 30m",
+    basePrice: 720,
+    discountPercent: 20,
+    availableSeats: 5,
+  },
+  {
+    id: "LC202",
+    airline: "SkyWings",
+    originCity: "New York",
+    originCode: "JFK",
+    destinationCity: "Paris",
+    destinationCode: "CDG",
+    departureDate: "2025-12-05",
+    departureTime: "19:30",
+    arrivalTime: "08:40",
+    duration: "8h 10m",
+    basePrice: 680,
+    discountPercent: 30,
+    availableSeats: 14,
+  },
+
+  // Chicago (ORD)
+  {
+    id: "LC300",
+    airline: "CloudAir",
+    originCity: "Chicago",
+    originCode: "ORD",
+    destinationCity: "Los Angeles",
+    destinationCode: "LAX",
+    departureDate: "2025-12-02",
+    departureTime: "07:45",
+    arrivalTime: "10:15",
+    duration: "4h 30m",
+    basePrice: 240,
+    discountPercent: 25,
+    availableSeats: 18,
+  },
+  {
+    id: "LC301",
+    airline: "FastJet",
+    originCity: "Chicago",
+    originCode: "ORD",
+    destinationCity: "Miami",
+    destinationCode: "MIA",
+    departureDate: "2025-12-03",
+    departureTime: "12:00",
+    arrivalTime: "16:10",
+    duration: "4h 10m",
+    basePrice: 210,
     discountPercent: 30,
     availableSeats: 9,
   },
   {
-    id: "SA310",
-    airline: "StarAviation",
-    originCity: "Paris",
-    originCode: "CDG",
-    destinationCity: "Miami",
-    destinationCode: "MIA",
-    departureDate: "2025-12-03",
-    departureTime: "11:15",
-    arrivalTime: "17:00",
-    duration: "9h 45m",
-    basePrice: 933.0,
-    discountPercent: 30,
-    availableSeats: 5,
-  },
-  {
-    id: "CA140",
-    airline: "CloudAir",
-    originCity: "Chicago",
-    originCode: "ORD",
-    destinationCity: "Singapore",
-    destinationCode: "SIN",
-    departureDate: "2025-12-03",
-    departureTime: "09:45",
-    arrivalTime: "22:15",
-    duration: "16h 30m",
-    basePrice: 181.0,
-    discountPercent: 30,
-    availableSeats: 20,
-  },
-  {
-    id: "SW900",
-    airline: "SkyWings",
-    originCity: "Tokyo",
-    originCode: "HND",
-    destinationCity: "Paris",
-    destinationCode: "CDG",
-    departureDate: "2025-12-03",
-    departureTime: "14:15",
-    arrivalTime: "21:20",
-    duration: "13h 5m",
-    basePrice: 750.0,
-    discountPercent: 30,
-    availableSeats: 12,
-  },
-  {
-    id: "CA555",
-    airline: "CloudAir",
+    id: "LC302",
+    airline: "AeroConnect",
     originCity: "Chicago",
     originCode: "ORD",
     destinationCity: "London",
     destinationCode: "LHR",
-    departureDate: "2025-12-03",
-    departureTime: "09:45",
-    arrivalTime: "22:00",
-    duration: "8h 15m",
-    basePrice: 1123.0,
+    departureDate: "2025-12-04",
+    departureTime: "17:30",
+    arrivalTime: "08:00",
+    duration: "8h 30m",
+    basePrice: 780,
     discountPercent: 30,
     availableSeats: 7,
   },
+
+  // International: London hub
+  {
+    id: "LC400",
+    airline: "SkyWings",
+    originCity: "London",
+    originCode: "LHR",
+    destinationCity: "Paris",
+    destinationCode: "CDG",
+    departureDate: "2025-12-02",
+    departureTime: "09:05",
+    arrivalTime: "10:30",
+    duration: "1h 25m",
+    basePrice: 120,
+    discountPercent: 25,
+    availableSeats: 16,
+  },
+  {
+    id: "LC401",
+    airline: "CloudAir",
+    originCity: "London",
+    originCode: "LHR",
+    destinationCity: "Dubai",
+    destinationCode: "DXB",
+    departureDate: "2025-12-03",
+    departureTime: "20:15",
+    arrivalTime: "06:00",
+    duration: "6h 45m",
+    basePrice: 610,
+    discountPercent: 30,
+    availableSeats: 11,
+  },
+  {
+    id: "LC402",
+    airline: "FastJet",
+    originCity: "London",
+    originCode: "LHR",
+    destinationCity: "Singapore",
+    destinationCode: "SIN",
+    departureDate: "2025-12-05",
+    departureTime: "22:30",
+    arrivalTime: "18:10",
+    duration: "12h 40m",
+    basePrice: 950,
+    discountPercent: 35,
+    availableSeats: 6,
+  },
+
+  // Asia routes
+  {
+    id: "LC500",
+    airline: "AeroConnect",
+    originCity: "Singapore",
+    originCode: "SIN",
+    destinationCity: "Tokyo",
+    destinationCode: "HND",
+    departureDate: "2025-12-03",
+    departureTime: "08:20",
+    arrivalTime: "15:00",
+    duration: "6h 40m",
+    basePrice: 430,
+    discountPercent: 25,
+    availableSeats: 13,
+  },
+  {
+    id: "LC501",
+    airline: "SkyWings",
+    originCity: "Tokyo",
+    originCode: "HND",
+    destinationCity: "Los Angeles",
+    destinationCode: "LAX",
+    departureDate: "2025-12-04",
+    departureTime: "17:45",
+    arrivalTime: "10:05",
+    duration: "9h 20m",
+    basePrice: 880,
+    discountPercent: 30,
+    availableSeats: 10,
+  },
+  {
+    id: "LC502",
+    airline: "CloudAir",
+    originCity: "Dubai",
+    originCode: "DXB",
+    destinationCity: "Singapore",
+    destinationCode: "SIN",
+    departureDate: "2025-12-06",
+    departureTime: "01:10",
+    arrivalTime: "10:00",
+    duration: "6h 50m",
+    basePrice: 540,
+    discountPercent: 25,
+    availableSeats: 15,
+  },
+
+  // Extra random short-haul
+  {
+    id: "LC600",
+    airline: "FastJet",
+    originCity: "San Francisco",
+    originCode: "SFO",
+    destinationCity: "Seattle",
+    destinationCode: "SEA",
+    departureDate: "2025-12-02",
+    departureTime: "13:15",
+    arrivalTime: "15:00",
+    duration: "1h 45m",
+    basePrice: 150,
+    discountPercent: 20,
+    availableSeats: 9,
+  },
+  {
+    id: "LC601",
+    airline: "AeroConnect",
+    originCity: "San Francisco",
+    originCode: "SFO",
+    destinationCity: "New York",
+    destinationCode: "JFK",
+    departureDate: "2025-12-03",
+    departureTime: "06:40",
+    arrivalTime: "15:00",
+    duration: "7h 20m",
+    basePrice: 420,
+    discountPercent: 30,
+    availableSeats: 12,
+  },
 ];
+
+function generateMockFlights(fromCityRaw, toCityRaw, date) {
+  const fromCity =
+    fromCityRaw.charAt(0).toUpperCase() + fromCityRaw.slice(1);
+  const toCity = toCityRaw.charAt(0).toUpperCase() + toCityRaw.slice(1);
+
+  const airlines = ["AeroConnect", "CloudAir", "SkyWings", "FastJet"];
+  const basePrices = [220, 340, 460];
+  const times = ["06:30", "12:15", "19:45"];
+  const durations = ["3h 10m", "5h 25m", "8h 40m"];
+
+  const results = [];
+
+  for (let i = 0; i < 3; i++) {
+    results.push({
+      id: `LCX${Math.floor(Math.random() * 900 + 100)}`,
+      airline: airlines[i % airlines.length],
+      originCity: fromCity,
+      originCode: fromCity.slice(0, 3).toUpperCase(),
+      destinationCity: toCity,
+      destinationCode: toCity.slice(0, 3).toUpperCase(),
+      departureDate: date,
+      departureTime: times[i],
+      arrivalTime: "", // we can leave empty for now or add fake
+      duration: durations[i],
+      basePrice: basePrices[i],
+      discountPercent: 25 + i * 5,
+      availableSeats: 5 + i * 4,
+    });
+  }
+
+  return results;
+}
 
 function discountedPrice(flight) {
   return +(flight.basePrice * (1 - flight.discountPercent / 100)).toFixed(2);
@@ -493,29 +702,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // -------- SEARCH --------
   const searchForm = $("#searchForm");
-  if (searchForm) {
-    searchForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+if (searchForm) {
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      const from = $("#searchFrom").value.trim().toLowerCase();
-      const to = $("#searchTo").value.trim().toLowerCase();
-      const date = $("#searchDate").value; // YYYY-MM-DD or ""
+    const fromInput = $("#searchFrom").value.trim();
+    const toInput = $("#searchTo").value.trim();
+    const date = $("#searchDate").value; // YYYY-MM-DD or ""
 
-      const filtered = flights.filter((f) => {
-        const matchFrom = from
-          ? f.originCity.toLowerCase().includes(from)
-          : true;
-        const matchTo = to
-          ? f.destinationCity.toLowerCase().includes(to)
-          : true;
-        const matchDate = date ? f.departureDate === date : true;
+    const from = fromInput.toLowerCase();
+    const to = toInput.toLowerCase();
 
-        return matchFrom && matchTo && matchDate;
-      });
+    const filtered = flights.filter((f) => {
+      const matchFrom = from
+        ? f.originCity.toLowerCase().includes(from)
+        : true;
+      const matchTo = to
+        ? f.destinationCity.toLowerCase().includes(to)
+        : true;
+      const matchDate = date ? f.departureDate === date : true;
 
-      renderDeals(filtered);
+      return matchFrom && matchTo && matchDate;
     });
-  }
+
+    if (filtered.length > 0) {
+      // We found real flights from the static database
+      renderDeals(filtered);
+    } else if (from && to && date) {
+      // No real flights → generate mock flights for the user’s search
+      const dynamicFlights = generateMockFlights(fromInput, toInput, date);
+      renderDeals(dynamicFlights);
+    } else {
+      // Not enough info and no matches → show nothing / message
+      renderDeals([]);
+    }
+  });
+}
 
   // Back buttons
   const backToHome = $("#backToHome");
