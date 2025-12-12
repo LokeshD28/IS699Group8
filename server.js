@@ -11,8 +11,15 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+app.get("/", (req, res) => {
+  res.send("LastChance Air backend is running ✅");
+});
+
 app.use(cors());
 app.use(express.json());
+
+// Serve frontend files
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // ============= SQLITE DATABASE =============
 const dbPath = path.join(__dirname, "database.db");
@@ -437,6 +444,11 @@ app.post("/api/bookings/:id/cancel", (req, res) => {
       res.json({ success: true });
     }
   );
+});
+
+// Fallback to frontend for browser refresh
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 // ============= START SERVER =============
